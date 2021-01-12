@@ -1,0 +1,27 @@
+{
+  "name": "codevs-web-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./src/index.js",
+    "dev": "set NODE_ENV=development && node ./src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CoDevsCommunity/codevs-web-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CoDevsCommunity/codevs-web-backend/issues"
+  },
+  "homepage": "https://github.com/CoDevsCommunity/codevs-web-backend#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0"
+  }
+}
