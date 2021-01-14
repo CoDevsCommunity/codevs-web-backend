@@ -1,18 +1,22 @@
 {
   "name": "codevs-web-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "codevs web backend",
   "main": "index.js",
   "scripts": {
     "start": "node ./src/index.js",
-    "dev": "set NODE_ENV=development && node ./src/index.js"
+    "dev": "set NODE_ENV=development && node ./src/index.js",
+    "eslint": "eslint ./src/",
+    "eslint:fix": "eslint ./src/ --fix",
+    "prettier:fix": "prettier ./src/ --write",
+    "precommit": "npm run eslint:fix && npm run prettier:fix"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/CoDevsCommunity/codevs-web-backend.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Codevs Community",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/CoDevsCommunity/codevs-web-backend/issues"
@@ -22,6 +26,12 @@
     "express": "^4.17.1"
   },
   "devDependencies": {
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
+    "eslint": "^7.17.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "prettier": "^2.2.1"
   }
 }
