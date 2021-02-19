@@ -1,9 +1,11 @@
-const server = require('./server/server');
+const app = require('./server/server');
+const dbConnect = require('./database/dbConnect');
 
 async function startApp() {
-  server.listen(server.get('port'), () => {
+  await dbConnect();
+  app.listen(app.get('port'), () => {
     // eslint-disable-next-line no-console
-    console.log(`App Listening in port ${server.get('port')}`);
+    console.log(`App Listening in port ${app.get('port')}`);
   });
 }
 
