@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./src/index.js",
-    "dev": "set NODE_ENV=development && node ./src/index.js",
+    "dev": "nodemon ./src/index.js",
     "eslint": "eslint ./src/",
     "eslint:fix": "eslint ./src/ --fix",
     "prettier:fix": "prettier ./src/ --write",
@@ -23,7 +23,11 @@
   },
   "homepage": "https://github.com/CoDevsCommunity/codevs-web-backend#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "bcryptjs": "^2.4.3",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.11.15",
+    "nodemon": "^2.0.7"
   },
   "devDependencies": {
     "dotenv": "^8.2.0",
