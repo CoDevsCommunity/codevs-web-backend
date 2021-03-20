@@ -2,6 +2,7 @@ const Express = require('express');
 
 const userController = require('../controllers/user.controller');
 const followController = require('../controllers/follow.controller');
+const contactController = require('../controllers/contact.controller');
 
 const tokenVerify = require('../middlewares/tokenVerify');
 
@@ -19,5 +20,7 @@ router
   .get(followController.getFollowers)
   .post(tokenVerify, followController.followTo)
   .delete(tokenVerify, followController.unFollowTo);
+
+router.route('/contact').post(contactController.getInfo);
 
 module.exports = router;
