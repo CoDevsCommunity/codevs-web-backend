@@ -14,8 +14,8 @@ const Contact = require('../database/models/Contact');
 contactController.getInfo = async(req, res) => {
   try{
     const { fullName, affair, email, message, ip } = req.body;
-    const searchIp = await Contact.findOne({ip: ip});
-    const searchMessage = await Contact.findOne({message: message});
+    const searchIp = await Contact.findOne({ip});
+    const searchMessage = await Contact.findOne({message});
 
       if(email.includes('.') && email.includes('@')){ 
         if(message.length > 124){
