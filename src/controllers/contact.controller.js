@@ -17,14 +17,16 @@ const contactController = {};
 contactController.getInfo = async (req, res) => {
   try {
     const { fullName, subject, email, message, ip } = req.body;
-    const searchIp = await Contact.findOne({ ip });
-    const searchMessage = await Contact.findOne({ message });
 
     if (!fullName || !subject || !email || !message || !ip) {
       return res.status(400).json({
         message: 'Please fill every data',
       });
     }
+
+    const searchIp = await Contact.findOne({ ip });
+    const searchMessage = await Contact.findOne({ message });
+
     if (email.includes('.') && email.includes('@')) {
       if (fullName.length > 3) {
         if (message.length > 124) {
