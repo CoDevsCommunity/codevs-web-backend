@@ -13,7 +13,7 @@ const contactSchema = new Schema({
     type: String,
     required: true,
   },
-  affair: {
+  subject: {
     type: String,
     required: true,
   },
@@ -24,6 +24,10 @@ const contactSchema = new Schema({
   message: {
     type: String,
     required: true,
+  },
+  created_At: {
+    type: Date,
+    default: Date.now,
   },
 });
 
