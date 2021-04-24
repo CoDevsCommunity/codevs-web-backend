@@ -2,6 +2,7 @@ const Express = require('express');
 
 const userController = require('../controllers/user/user.controller');
 const followController = require('../controllers/user/follow.controller');
+const contactController = require('../controllers/contact.controller');
 const tokenVerify = require('../middlewares/tokenVerify');
 
 const postController = require('../controllers/post/post.controller');
@@ -74,5 +75,7 @@ router
 router
   .route('/uploadFile')
   .post(tokenVerify, rateLimiter.uploadMedia, mediaController.uploadFile);
+
+router.route('/contact').post(contactController.getInfo);
 
 module.exports = router;
