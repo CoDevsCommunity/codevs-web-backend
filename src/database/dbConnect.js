@@ -5,7 +5,7 @@ module.exports = async () => {
     await connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      useFindAndModify: true,
+      useFindAndModify: false,
     });
     console.log('DB is connected');
   } catch (error) {
