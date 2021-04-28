@@ -15,25 +15,30 @@ const UserSchema = new Schema({
     required: true,
   },
   socialMedia: {
-    banner_url: {
+    bannerUrl: {
       type: String,
+      default: '',
     },
     avatarUrl: {
       type: String,
+      default: '',
     },
   },
   socialLinks: {
-    twitter_url: {
+    twitterUrl: {
       type: String,
+      default: '',
     },
     githubUrl: {
       type: String,
+      default: '',
     },
   },
   following: [
     {
       user: {
         type: Object,
+        default: [],
       },
     },
   ],
@@ -41,11 +46,33 @@ const UserSchema = new Schema({
     {
       user: {
         type: Object,
+        default: [],
       },
     },
   ],
+  upLikes: [
+    {
+      post: {
+        type: Object,
+        default: [],
+      },
+    },
+  ],
+  downLikes: [
+    {
+      post: {
+        type: Object,
+        default: [],
+      },
+    },
+  ],
+  publications: {
+    type: Number,
+    default: 0,
+  },
   state: {
     type: String,
+    default: 'online',
   },
   exp: {
     type: Number,

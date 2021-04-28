@@ -1,4 +1,4 @@
-const User = require('../database/models/User');
+const User = require('../../database/models/User');
 
 const followController = {};
 
@@ -24,17 +24,15 @@ followController.getFollowers = async (req, res) => {
       });
     }
 
-    const UserFollowers = await User.findOne({ username }).select('-password');
-
     if (!UserFound.$isValid('followers')) {
-      console.log('Has no followers');
       return res.status(200).json({
         message: 'User has no followers',
       });
     }
 
     return res.status(200).json({
-      data: UserFollowers,
+      message: 'success',
+      data: await User.findOne({ username }).select('-password'),
     });
   } catch (error) {
     console.error(error);
@@ -53,70 +51,74 @@ followController.getFollowers = async (req, res) => {
 
 followController.followTo = async (req, res) => {
   try {
-    const { username, userToFollow } = req.body;
-    if (!username || !userToFollow) {
+    const { userId, username, userToFollow } = req.body;
+    if (!userId || !username || !userToFollow) {
       return res.status(400).json({
-        message: 'Bad Request, Username and followTo is not valid',
+        message: 'Bad Request, provided userId, username and userToFollow',
       });
     }
 
-    const UserFound = await User.findOne({ username: userToFollow });
-    if (!UserFound || UserFound == null) {
+    const getUserToFollow = await User.findOne({
+      username: userToFollow,
+    }).select('_id');
+    if ((await User.findOne({ username })) === null) {
+      return res.status(200).json({
+        message: 'Bad Request, Username Not valid, it does not exist',
+      });
+    }
+    if (getUserToFollow == null) {
       return res.status(200).json({
         message: 'User to follow not exists',
       });
     }
 
-    const isFollowed = await User.findOne({ username }, async (err, user) => {
-      if (
-        user.followers.filter((follower) => follower.user.username === username)
-      )
-        return true;
-      return false;
+    if (getUserToFollow.username === username) {
+      return res.status(200).json({
+        message: 'You can not follow yourself',
+      });
+    }
+
+    let isFollowed = false;
+    await User.findOne({ username }, async (err, user) => {
+      // eslint-disable-next-line no-unused-expressions
+      user.following.find((follower) => follower.user.username === userToFollow)
+        ? (isFollowed = true)
+        : null;
     });
-    console.log(isFollowed);
     if (isFollowed) {
       return res.status(200).json({
         message: 'you are already following this user',
       });
     }
 
-    const UserFollowing = await User.findOne({ username })
-      .select('-password')
-      .select('-email')
-      .select('-following')
-      .select('-followers');
-
-    await User.updateOne(
-      { username: userToFollow },
-      {
-        $push: {
-          followers: {
-            user: UserFollowing,
-          },
-        },
-      }
-    );
-
-    const UserFollowedAdd = await User.findOne({ username: userToFollow })
-      .select('-password')
-      .select('-email')
-      .select('-following')
-      .select('-followers');
+    // Add the user who wants to follow followes
 
     await User.updateOne(
       { username },
       {
         $push: {
           following: {
-            user: UserFollowedAdd,
+            user: getUserToFollow,
+          },
+        },
+      }
+    );
+
+    // Add follower to the user who will follow
+
+    await User.updateOne(
+      { username: userToFollow },
+      {
+        $push: {
+          followers: {
+            user: await User.findOne({ username }).select('_id'),
           },
         },
       }
     );
 
     return res.status(201).json({
-      message: 'Success',
+      message: 'User Follow Success',
     });
   } catch (error) {
     console.error(error);
@@ -135,43 +137,48 @@ followController.followTo = async (req, res) => {
 
 followController.unFollowTo = async (req, res) => {
   try {
-    const { username, unfollowTo } = req.body;
-    if (!username || !unfollowTo) {
+    const { userId, username, unfollowTo } = req.body;
+    if (!userId || !username || !unfollowTo) {
       return res.status(400).json({
-        message:
-          'Bad Request, please provided username and unfollowTo username',
+        message: 'Bad Request, provided userId, username and unfollowTo',
       });
     }
-    const UserFound = await User.findOne({ username })
-      .select('-email')
-      .select('-password');
+    const getUserToUnFollow = await User.findOne({
+      username: unfollowTo,
+    }).select('_id');
 
-    if (UserFound == null) {
+    if (getUserToUnFollow == null) {
       return res.status(200).json({
         message:
           'User Does not exist to be unfollow, please specify correct unFollowTo username',
       });
     }
 
-    const isFollowed = await User.findOne({ username }, async (err, user) => {
-      if (
-        user.followers.filter((follower) => follower.user.username === username)
-      )
-        return true;
-      return false;
-    });
+    if (getUserToUnFollow.username === username) {
+      return res.status(200).json({
+        message: 'You can not unfollow yourself',
+      });
+    }
 
+    let isFollowed = false;
+    await User.findOne({ username }, async (err, user) => {
+      if (user.following.length === 0) {
+        return;
+      }
+      // eslint-disable-next-line no-unused-expressions
+      user.following.find(
+        (follower) => follower.user.username.toString() === unfollowTo
+      )
+        ? (isFollowed = true)
+        : false;
+    });
     if (!isFollowed) {
       return res.status(200).json({
         message: 'You are not following this user',
       });
     }
 
-    const UserUnFollowing = await User.findOne({ username })
-      .select('-password')
-      .select('-email')
-      .select('-following')
-      .select('-followers');
+    const UserUnFollowing = await User.findOne({ username }).select('_id');
 
     await User.updateOne(
       { username: unfollowTo },
@@ -184,28 +191,19 @@ followController.unFollowTo = async (req, res) => {
       }
     );
 
-    const UserUnFollowedRemove = await User.findOne({ username: unfollowTo })
-      .select('-password')
-      .select('-email')
-      .select('-following')
-      .select('-followers');
-
     await User.updateOne(
       { username },
       {
         $pull: {
           following: {
-            user: UserUnFollowedRemove,
+            user: await User.findOne({ username: unfollowTo }).select('_id'),
           },
         },
       }
     );
 
-    console.log('Follow Exists');
-
     return res.status(200).json({
-      message: 'User UnFollowed',
-      data: UserFound,
+      message: 'User UnFollowed Success',
     });
   } catch (error) {
     console.error(error);
